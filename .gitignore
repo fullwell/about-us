@@ -6,3 +6,12 @@ UserSettings
 .vsconfig
 about-us-r1.sln
 Library
+Assembly-CSharp.csproj
+Assembly-CSharp-Editor.csproj
+Assembly-CSharp-firstpass.csproj
+Export.zip
+.vs
+Export
+obj
+Resources
+AboutUsR1.sln
