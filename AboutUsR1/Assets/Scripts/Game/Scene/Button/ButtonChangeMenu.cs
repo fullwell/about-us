@@ -5,6 +5,7 @@ using UnityEngine;
 public class ButtonChangeMenu : ButtonData
 {
     public MenuParent nextShowMenu;
+    public List<MenuParent> unHideMenu = new List<MenuParent>();
 
     public override void OnClick()
     {
@@ -15,16 +16,19 @@ public class ButtonChangeMenu : ButtonData
             {
                 if (!m.gameObject.activeSelf)
                 {
-                    m.gameObject.SetActive(true);
                     m.Show();
+                    m.gameObject.SetActive(true);
                 }
             }
             else
             {
                 if(m.gameObject.activeSelf)
                 {
-                    m.gameObject.SetActive(false);
-                    m.Hide();
+                    if (!unHideMenu.Contains(m))
+                    {
+                        m.gameObject.SetActive(false);
+                        m.Hide();
+                    }
                 }
             }
         });

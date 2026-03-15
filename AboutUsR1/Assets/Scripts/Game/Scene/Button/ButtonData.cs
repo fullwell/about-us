@@ -21,8 +21,11 @@ public class ButtonData : MonoBehaviour
 
     public virtual void Init()
     {
-        button = gameObject.AddComponent<Button>();
-        button.transition = Selectable.Transition.None;
+        if(!gameObject.TryGetComponent<Button>(out button))
+        {
+            button = gameObject.AddComponent<Button>();
+            button.transition = Selectable.Transition.None;
+        }
         button.onClick.AddListener(OnClick);
     }
 

@@ -17,6 +17,8 @@ public class MenuM2_A1 : MenuParent
     ButtonM2_A1_Tab currentButtonTab;
     RawImage infoRaw0;
     RawImage infoRaw1;
+    Button next;
+    Button prev;
 
     int pageIndex = 0;
     float pageWaitTime = 2f;
@@ -45,7 +47,11 @@ public class MenuM2_A1 : MenuParent
         infoRaw1 = transform.Find("Right/Info/1").GetComponent<RawImage>();
         infoRaw0.color = Color.clear;
         infoRaw1.color = Color.clear;
-
+        //初始化左右翻页按钮
+        next = transform.Find("Right/next").gameObject.AddComponent<Button>();
+        prev = transform.Find("Right/prev").gameObject.AddComponent<Button>();
+        next.onClick.AddListener(OnNext);
+        prev.onClick.AddListener(OnPrev);
     }
 
     public override void Show()
@@ -124,38 +130,25 @@ public class MenuM2_A1 : MenuParent
             {
                 btn_i.GetComponent<Image>().color = D.colorTab1;
                 //更新下面资料
-                if(1 == data.infoTextures.Count)
-                {
-                    infoRaw1.texture = data.infoTextures[0];
-                    infoRaw1.color = Color.white;
-                    infoRaw0.color = Color.clear;
-                    Debug.LogError("1");
-                }
-                else if(1 < data.infoTextures.Count)
-                {
-                    pageIndex = 0;
-                    infoRaw1.texture = data.infoTextures[0];
-                    infoRaw1.color = Color.white;
-                    infoRaw0.color = Color.clear;
-                    InvokeRepeating("PageAnimation", pageWaitTime, pageWaitTime);
-                    /*if (null == infoRaw1.texture)
-                    {
-                        pageIndex = 0;
-                        infoRaw1.texture = data.infoTextures[0];
-                        infoRaw1.color = Color.white;
-                        infoRaw0.color = Color.clear;
-                        InvokeRepeating("PageAnimation", pageWaitTime, pageWaitTime);
-                    }
-                    else
-                    {
-                        pageIndex = -1;
-                        InvokeRepeating("PageAnimation", 0, pageWaitTime);
-                    }*/
-                }
-                else
-                {
-                    Debug.LogError("数据错误");
-                }
+                pageIndex = 0;
+                infoRaw1.texture = data.infoTextures[0];
+                infoRaw1.color = Color.white;
+                infoRaw0.color = Color.clear;
+                FlushPageButton();
+                //if (1 == data.infoTextures.Count)
+                //{
+                //    infoRaw1.texture = data.infoTextures[0];
+                //    infoRaw1.color = Color.white;
+                //    infoRaw0.color = Color.clear;
+                //    Debug.LogError("1");
+                //}
+                //else if(1 < data.infoTextures.Count)
+                //{
+                //}
+                //else
+                //{
+                //    Debug.LogError("数据错误");
+                //}
             }
         }
 
@@ -165,12 +158,6 @@ public class MenuM2_A1 : MenuParent
     private void PageAnimation()
     {
         var data = currentButtonTab.DataTab;
-        pageIndex++;
-        if(pageIndex >= data.infoTextures.Count)
-        {
-            pageIndex = 0;
-        }
-
         infoRaw0.texture = infoRaw1.texture;
         infoRaw1.texture = data.infoTextures[pageIndex];
         infoRaw0.color = Color.white;
@@ -187,5 +174,40 @@ public class MenuM2_A1 : MenuParent
 
 
     }
-
+    private void FlushPageButton()
+    {
+        var data = currentButtonTab.DataTab;
+        if (data.infoTextures.Count <= 1)
+        {
+            next.gameObject.SetActive(false);
+            prev.gameObject.SetActive(false);
+        }
+        else
+        {
+            next.gameObject.SetActive(pageIndex < data.infoTextures.Count - 1);
+            prev.gameObject.SetActive(pageIndex > 0);
+        }
+    }
+    private void OnNext()
+    {
+        var data = currentButtonTab.DataTab;
+        pageIndex++;
+        if (pageIndex >= data.infoTextures.Count)
+        {
+            pageIndex = 0;
+        }
+        PageAnimation();
+        FlushPageButton();
+    }
+    private void OnPrev()
+    {
+        var data = currentButtonTab.DataTab;
+        pageIndex--;
+        if (pageIndex < 0)
+        {
+            pageIndex = data.infoTextures.Count - 1;
+        }
+        PageAnimation();
+        FlushPageButton();
+    }
 }
